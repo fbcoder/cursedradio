@@ -1,0 +1,43 @@
+#
+# Python code for the interface
+#
+
+import curses
+import time
+import threading
+
+class NCursesInterface(threading.Thread):
+    def __init__ (self, mediator):
+        threading.Thread.__init__(self)
+        self.mediator = mediator
+        self.currentSong = ""
+        self.currentArtist = ""
+        self.radioState = "No station playing"
+        self.screen = None
+        curses.wrapper(self.wrapperCallback)
+
+    def wrapperCallback(self, screen):
+        self.screen = screen
+    
+    def run(self):
+        while 1:
+            self.drawInteface()
+            time.sleep(1)
+    
+    def printLine(self,x,y,text):
+        self.screen.addstr(y,x,text)
+    
+    def drawInterface(self):
+        self.screen.erase()
+        self.printLine(1,1,"Song: %s" % self.currentSong)
+        self.printLine(1,2,"Title: %s" % self.currentTitle)
+
+    def updateVolume(self):
+        pass
+
+    def updateState(self, data):
+        self.radioState = data['state']
+
+    def updateSong(self, data):
+        self.currentSong = mediator.context.data['title']
+        self.currentArtist = mediator.context.data['artist']
